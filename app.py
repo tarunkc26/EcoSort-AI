@@ -177,11 +177,16 @@ st.sidebar.title("♻️ EcoSort AI")
 st.sidebar.caption("Smart Recycling Assistant")
 st.sidebar.markdown("---")
 
-api_key = st.sidebar.text_input(
-    "Gemini API key",
-    type="password",
-    help="Your key is used for AI requests. Do not share it."
-)
+# Read the API key automatically from Streamlit Secrets.
+# If no secret is found (for example on a laptop), show the input box.
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    api_key = st.sidebar.text_input(
+        "Gemini API key",
+        type="password",
+        help="Your key is used for AI requests. Do not share it."
+    )
 
 st.sidebar.info(
     "Capture or upload a waste photo, analyze it with AI, "
@@ -247,7 +252,8 @@ if page == "Scan Waste":
         if st.button("🔍 Analyze with AI", type="primary"):
             if not api_key.strip():
                 st.error(
-                    "Enter your Gemini API key in the sidebar first."
+                    "Gemini API key not found. Add GEMINI_API_KEY "
+                    "in Streamlit Secrets."
                 )
             else:
                 try:
